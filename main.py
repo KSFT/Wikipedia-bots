@@ -27,19 +27,20 @@ pages=result['query']['pages'].values()
 cont=result['continue']['gcmcontinue']
 while cont:
     for page in pages:
+        if any([i in page['revisions'][0]['*'].upper() for i in ("{{BOTS","{{NOBOTS","TEMPLATE:BOTS","TEMPLATE:NOBOTS")]):
+            continue
         while True:
             text=page['revisions'][0]['*']
             name=page['title']
             teams=getteams(text)
             ischange=False
             for team in teams:
-                if '[[Category:{}]]'.format(team) not in text:
-                    text.append('[[Category:{}]]'.format(team))
+                if '[[Category:{} players]]'.format(team) not in text:
+                    text.append('[[Category:{} players]]'.format(team))
                     ischange=True
             if ischange:
                 try:
                     ceterach.api.page(name).edit(text,summary='',bot=True)
-                    sys.exit()
                 except ceterach.exceptions.EditConflictError:
                     print 'There was an edit conflict!'
     result=mw.call(prop='revisions', rvprop='content', generator='categorymembers', gcmtitle=CATEGORY, gcmprop='title', gcmlimit=REQUEST_LIMIT)

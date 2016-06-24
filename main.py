@@ -34,12 +34,13 @@ while cont:
             name=page['title']
             teams=getteams(text)
             print(name)
-            ischange=False
+            changed=False
             for team in teams:
-                if '[[Category:{} players]]'.format(team) not in text:
-                    text=text+'[[Category:{} players]]'.format(team)
-                    ischange=True
-            if ischange:
+                cat='[[Category:{} players]]'.format(team)
+                if cat not in text and mw.page(cat).exists:
+                    text=text+cat
+                    changed=True
+            if changed:
                 try:
                     mw.page(name).edit(text,summary='bot testing edit',bot=True)
                     print('done editing')

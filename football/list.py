@@ -24,6 +24,7 @@ print('Username: ',end='')
 username=input()
 password=getpass.getpass()
 mw.login(username,password)
+ignore=set([i[1:] for i in ceterach.page.Page('Wikipedia:WikiProject_Football/Missing_categories/Null').content.split('\n') if i and i[0]=='*'])
 result=mw.call(prop='revisions', rvprop='content', generator='categorymembers', gcmtitle=CATEGORY, gcmprop='title', gcmlimit=REQUEST_LIMIT)
 pages=result['query']['pages'].values()
 cont=result['continue']['gcmcontinue']
@@ -37,8 +38,8 @@ while True:
             print(str(discrepancies)+' out of '+str(count)+' articles have discrepancies so far.')
         text=page['revisions'][0]['*']
         name=page['title']
-        infoboxteams=set([[i for i in j if i][0] for j in re.findall(r'\|\s*clubs\d+\s*=\s*(?:([a-zA-Z0-9().,][a-zA-Z0-9()., ]+[a-zA-Z0-9().,])|(?:\[\[([^]|]+)\|[^]]+\]\]))',text)])
-        catteams=set(re.findall(r'\[\[Category:([^]]+?) (?:wartime guest )?(?:players|footballers)\]\]',text))
+        infoboxteams=set([[i for i in j if i][0] for j in re.findall(r'\|\s*clubs\d+\s*=\s*(?:([a-zA-Z0-9().,][a-zA-Z0-9()., ]+[a-zA-Z0-9().,])|(?:\[\[([^]|]+)\|[^]]+\]\]))',text)])-ignore
+        catteams=set(re.findall(r'\[\[Category:([^]]+?) (?:wartime guest )?(?:players|footballers)\]\]',text))-ignore
         if infoboxteams-catteams:
             discrepancies+=1
             names.append(name+': '+', '.join(infoboxteams-catteams))
@@ -51,5 +52,8 @@ while True:
 print("total discrepancies:")
 print(str(discrepancies)+'/'+str(count))
 text="\n\n".join(names)
-page=ceterach.Page(mw,"User:KSFT bot/Football/"+CATEGORY)
-page.edit(text,"[[User:KSFT bot|Bot task 1]]: Update list.")
+page=ceterach.page.Page(mw,"User:KSFT bot/Football/"+CATEGORY)
+try:
+    page.edit(text,"[[User:KSFT bot|Bot task 1]]: Update list.")
+except ceterach.exceptions.NonexistentPageError:
+    page.create(text,"[[User:KSFT bot|Bot task 1]]: Update list.")

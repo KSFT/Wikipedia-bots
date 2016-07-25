@@ -24,7 +24,7 @@ print('Username: ',end='')
 username=input()
 password=getpass.getpass()
 mw.login(username,password)
-ignore=set([i[1:] for i in ceterach.page.Page('Wikipedia:WikiProject_Football/Missing_categories/Null').content.split('\n') if i and i[0]=='*'])
+ignore=set([i[1:] for i in ceterach.page.Page(mw,'Wikipedia:WikiProject_Football/Missing_categories/Null').content.split('\n') if i and i[0]=='*'])
 result=mw.call(prop='revisions', rvprop='content', generator='categorymembers', gcmtitle=CATEGORY, gcmprop='title', gcmlimit=REQUEST_LIMIT)
 pages=result['query']['pages'].values()
 cont=result['continue']['gcmcontinue']

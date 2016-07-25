@@ -1,4 +1,4 @@
-CATEGORY='Category:English footballers'
+CATEGORY='Category:Scottish footballers'
 REQUEST_LIMIT=50
 
 import ceterach, getpass, re
@@ -42,7 +42,7 @@ while True:
         catteams=set(re.findall(r'\[\[Category:([^]]+?) (?:wartime guest )?(?:players|footballers)\]\]',text))-ignore
         if infoboxteams-catteams:
             discrepancies+=1
-            names.append(name+': '+', '.join(infoboxteams-catteams))
+            names.append('[['+name+']]: '+', '.join(infoboxteams-catteams))
     result=mw.call(gcmcontinue=cont,prop='revisions', rvprop='content', generator='categorymembers', gcmtitle=CATEGORY, gcmprop='title', gcmlimit=REQUEST_LIMIT)
     pages=result['query']['pages'].values()
     try:
